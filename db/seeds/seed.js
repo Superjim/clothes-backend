@@ -1,11 +1,11 @@
 const format = require("pg-format");
 const db = require("../connection");
 
-const seed = () => {
+const seed = ({ itemData, userData }) => {
   return db
-    .query(`DROP TABLE IF EXISTS favourites;`)
+    .query(`DROP TABLE IF EXISTS favourites cascade;`)
     .then(() => {
-      return db.query(`DROP TABLE IF EXISTS basket;`);
+      return db.query(`DROP TABLE IF EXISTS baskets cascade;`);
     })
     .then(() => {
       return db.query(`DROP TABLE IF EXISTS users;`);
@@ -67,7 +67,30 @@ const seed = () => {
       );
 
       return basketTable;
+    })
+    .then(() => {
+      const insertClothesData = format(
+        `
+        INSERT INTO clothes (title, price, color, category, style, material, item_img_url)
+         VALUES %L RETURNING *;
+        `,
+        itemData.map(({ title, price, color, category, style, material, item_img_url }) => [title, price, color, category, style, material, item_img_url])
+      );
+
+      return db.query(insertClothesData);
+    })
+    .then(() => {
+      const insertUsersData = format(
+        `
+        INSERT INTO users (uid, username, firstname, preferences) 
+        VALUES %L RETURNING *;
+        `,
+        userData.map(({ uid, username, firstname, preferences }) => [uid, username, firstname, preferences])
+      );
+
+      return db.query(insertUsersData);
     });
+
 };
 
 module.exports = seed;
