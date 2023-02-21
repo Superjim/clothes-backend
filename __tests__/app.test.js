@@ -38,9 +38,9 @@ describe("clothes-backend", () => {
               "category",
               expect.any(String)
             );
-            expect(clothesArray[i]).toHaveProperty("style", expect.any(String));
+            expect(clothesArray[i]).toHaveProperty("brand", expect.any(String));
             expect(clothesArray[i]).toHaveProperty(
-              "material",
+              "gender",
               expect.any(String)
             );
             expect(clothesArray[i]).toHaveProperty(
