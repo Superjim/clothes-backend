@@ -3,7 +3,7 @@ module.exports = [
     uid: "12342341",
     username: "superjim",
     firstname: "Jim",
-    preferences: "",
+    preferences: "blue black white white",
   },
   {
     uid: "22342341",
