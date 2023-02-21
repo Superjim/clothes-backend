@@ -74,7 +74,17 @@ const seed = ({ itemData, userData }) => {
         INSERT INTO clothes (title, price, color, category, style, material, item_img_url)
          VALUES %L RETURNING *;
         `,
-        itemData.map(({ title, price, color, category, style, material, item_img_url }) => [title, price, color, category, style, material, item_img_url])
+        itemData.map(
+          ({
+            title,
+            price,
+            color,
+            category,
+            style,
+            material,
+            item_img_url,
+          }) => [title, price, color, category, style, material, item_img_url]
+        )
       );
 
       return db.query(insertClothesData);
@@ -85,12 +95,16 @@ const seed = ({ itemData, userData }) => {
         INSERT INTO users (uid, username, firstname, preferences) 
         VALUES %L RETURNING *;
         `,
-        userData.map(({ uid, username, firstname, preferences }) => [uid, username, firstname, preferences])
+        userData.map(({ uid, username, firstname, preferences }) => [
+          uid,
+          username,
+          firstname,
+          preferences,
+        ])
       );
 
       return db.query(insertUsersData);
     });
-
 };
 
 module.exports = seed;
