@@ -75,6 +75,41 @@ describe("clothes-backend", () => {
     });
   });
 
+  describe("patchUserPreferencesByUserId", () => {
+    test("updates user preferences", () => {
+      return request(app)
+        .patch("/api/users/12342341/preferences")
+        .send({ preferences: "red green blue yellow" })
+        .expect(200)
+        .then((response) => {
+          expect(response.body.msg).toEqual("User preferences updated");
+        })
+        .then(() => {
+          return request(app)
+            .get("/api/users/12342341")
+            .expect(200)
+            .then((response) => {
+              const user = response.body.user;
+              expect(user).toHaveProperty("uid", "12342341");
+              expect(user).toHaveProperty(
+                "preferences",
+                "red green blue yellow"
+              );
+            });
+        });
+    });
+
+    test("throw err if user doesnt exist", () => {
+      return request(app)
+        .patch("/api/users/cheese/preferences")
+        .send({ preferences: "red green blue yellow" })
+        .expect(404)
+        .then((response) => {
+          expect(response.body.msg).toEqual('User ID "cheese" not found');
+        });
+    });
+  });
+
   describe("error handling", () => {
     test("/api/helloworld path does not exist", () => {
       return request(app)
