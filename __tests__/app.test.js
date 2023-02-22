@@ -38,9 +38,9 @@ describe("clothes-backend", () => {
               "category",
               expect.any(String)
             );
-            expect(clothesArray[i]).toHaveProperty("brand", expect.any(String));
+            expect(clothesArray[i]).toHaveProperty("style", expect.any(String));
             expect(clothesArray[i]).toHaveProperty(
-              "gender",
+              "material",
               expect.any(String)
             );
             expect(clothesArray[i]).toHaveProperty(
@@ -58,6 +58,62 @@ describe("clothes-backend", () => {
         .expect(404)
         .then((response) => {
           expect(response.body.msg).toBe("Path not found");
+        });
+    });
+  });
+
+  describe("GET /api/users/:user_id/suggested_clothes", () => {
+    test("200: Respond with an array of 10 suggested clothes objects", () => {
+      return request(app)
+        .get("/api/users/12342341/suggested_clothes")
+        .expect(200)
+        .then(({ body }) => {
+          const suggestedArr = body.suggestedClothes;
+
+          expect(suggestedArr.length).toEqual(10);
+
+          for (let i = 0; i < suggestedArr.length; i++) {
+            expect(typeof suggestedArr[i]).toBe("object");
+            expect(Array.isArray(suggestedArr[i])).toBe(false);
+            expect(suggestedArr[i]).toHaveProperty(
+              "clothes_id",
+              expect.any(Number)
+            );
+            expect(suggestedArr[i]).toHaveProperty("title", expect.any(String));
+            expect(suggestedArr[i]).toHaveProperty("price", expect.any(String));
+            expect(suggestedArr[i]).toHaveProperty("color", expect.any(String));
+            expect(suggestedArr[i]).toHaveProperty(
+              "category",
+              expect.any(String)
+            );
+            expect(suggestedArr[i]).toHaveProperty("style", expect.any(String));
+            expect(suggestedArr[i]).toHaveProperty(
+              "material",
+              expect.any(String)
+            );
+            expect(suggestedArr[i]).toHaveProperty(
+              "item_img_url",
+              expect.any(String)
+            );
+          }
+        });
+    });
+
+    test("400: Bad Request invalid user id ", () => {
+      return request(app)
+        .get("/api/users/cheese/suggested_clothes")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad Request");
+        });
+    });
+
+    test("404: Not Found when uid is not in db", () => {
+      return request(app)
+        .get("/api/users/12456641/suggested_clothes")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Not Found");
         });
     });
   });
