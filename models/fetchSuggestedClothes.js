@@ -32,7 +32,6 @@ async function fetchSuggestedClothes(user_id) {
   const selectedClothes = clothes.slice(0, 100);
 
   const cosineSimilarityList = suggestionAlgorithmFunc(selectedClothes, user);
-  console.log(cosineSimilarityList);
   const suggestedClothes = [];
 
   cosineSimilarityList.forEach((suggetedItem) => {
