@@ -1,38 +1,24 @@
 const db = require("../db/connection");
 const { suggestionAlgorithmFunc } = require("../utils/algorithm");
+const fetchUserByUserId = require("./fetchUserByUserId");
 
-function fetchSuggestedClothes(user_id) {
+async function fetchSuggestedClothes(user_id) {
+  const user = await fetchUserByUserId(user_id);
+
   const sqlClothesQuery = `SELECT * FROM clothes;`;
-  const sqlUserQuery = `SELECT * FROM users WHERE users.uid = $1;`;
 
-  const clothesPromise = db.query(sqlClothesQuery);
-  const userPromise = db.query(sqlUserQuery, [user_id]);
+  const { rows: clothes } = await db.query(sqlClothesQuery);
 
-  return Promise.all([clothesPromise, userPromise]).then(
-    ([
-      { rows: clothes },
-      {
-        rows: [user],
-      },
-    ]) => {
-      if (user) {
-        const cosineSimilarityList = suggestionAlgorithmFunc(clothes, user);
-        const suggestedClothes = [];
+  const cosineSimilarityList = suggestionAlgorithmFunc(clothes, user);
+  const suggestedClothes = [];
 
-        cosineSimilarityList.forEach((suggetedItem) => {
-          const item = clothes.filter(
-            (item) => item.clothes_id === suggetedItem.id
-          );
+  cosineSimilarityList.forEach((suggetedItem) => {
+    const item = clothes.filter((item) => item.clothes_id === suggetedItem.id);
 
-          suggestedClothes.push(...item);
-        });
+    suggestedClothes.push(...item);
+  });
 
-        return suggestedClothes;
-      } else {
-        return Promise.reject({ status: 404, msg: "Not Found" });
-      }
-    }
-  );
+  return suggestedClothes;
 }
 
 module.exports = fetchSuggestedClothes;

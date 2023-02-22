@@ -32,7 +32,7 @@ const seed = ({ itemData, userData }) => {
       const usersTablePromise = db.query(
         `
             CREATE TABLE users (
-                uid INT PRIMARY KEY,
+                uid VARCHAR PRIMARY KEY,
                 username VARCHAR NOT NULL,
                 firstname VARCHAR NOT NULL,
                 preferences VARCHAR
@@ -48,7 +48,7 @@ const seed = ({ itemData, userData }) => {
         CREATE TABLE favourites (
           favourite_id SERIAL PRIMARY KEY,
           clothes_id INT NOT NULL REFERENCES clothes(clothes_id),
-          uid INT NOT NULL REFERENCES users(uid)
+          uid VARCHAR NOT NULL REFERENCES users(uid)
         );
         `
       );
@@ -61,7 +61,7 @@ const seed = ({ itemData, userData }) => {
         CREATE TABLE baskets (
           basket_id SERIAL PRIMARY KEY,
           clothes_id INT NOT NULL REFERENCES clothes(clothes_id),
-          uid INT NOT NULL REFERENCES users(uid)
+          uid VARCHAR NOT NULL REFERENCES users(uid)
         );
         `
       );

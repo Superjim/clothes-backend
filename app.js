@@ -2,11 +2,16 @@ const { response } = require("express");
 const express = require("express");
 const app = express();
 
-const { getClothes, getSuggestedClothes } = require("./controller.js");
+const {
+  getClothes,
+  getSuggestedClothes,
+  getUserByUserId,
+} = require("./controller.js");
 
 app.use(express.json());
 
 app.get("/api/clothes", getClothes);
+app.get("/api/users/:user_id", getUserByUserId);
 app.get("/api/users/:user_id/suggested_clothes", getSuggestedClothes);
 
 app.use((req, res, next) => {
@@ -24,7 +29,7 @@ app.use((err, req, res, next) => {
   } else {
     next(err);
   }
-})
+});
 
 //CUSTOM ERROR HANDLER
 app.use((err, req, res, next) => {

@@ -51,6 +51,30 @@ describe("clothes-backend", () => {
         });
     });
   });
+  describe("fetchUserByUserId", () => {
+    test("returns an existing user", () => {
+      return request(app)
+        .get("/api/users/12342341")
+        .expect(200)
+        .then((response) => {
+          const user = response.body.user;
+          expect(user).toHaveProperty("uid", "12342341");
+          expect(user).toHaveProperty("username", "superjim");
+          expect(user).toHaveProperty("firstname", "Jim");
+          expect(user).toHaveProperty("preferences", "blue black white white");
+        });
+    });
+
+    test("throws error if user doesnt exist", () => {
+      return request(app)
+        .get("/api/users/cheese")
+        .expect(404)
+        .then((response) => {
+          expect(response.body.msg).toEqual('User ID "cheese" not found');
+        });
+    });
+  });
+
   describe("error handling", () => {
     test("/api/helloworld path does not exist", () => {
       return request(app)
@@ -99,21 +123,22 @@ describe("clothes-backend", () => {
         });
     });
 
-    test("400: Bad Request invalid user id ", () => {
-      return request(app)
-        .get("/api/users/cheese/suggested_clothes")
-        .expect(400)
-        .then(({ body }) => {
-          expect(body.msg).toBe("Bad Request");
-        });
-    });
+    //user does not exist? is string so valid
+    // test("400: Bad Request invalid user id ", () => {
+    //   return request(app)
+    //     .get("/api/users/cheese/suggested_clothes")
+    //     .expect(400)
+    //     .then(({ body }) => {
+    //       expect(body.msg).toBe("Bad Request");
+    //     });
+    // });
 
     test("404: Not Found when uid is not in db", () => {
       return request(app)
         .get("/api/users/12456641/suggested_clothes")
         .expect(404)
         .then(({ body }) => {
-          expect(body.msg).toBe("Not Found");
+          expect(body.msg).toBe('User ID "12456641" not found');
         });
     });
   });
