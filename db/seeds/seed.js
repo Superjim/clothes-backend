@@ -22,8 +22,8 @@ const seed = ({ itemData, userData }) => {
             price MONEY NOT NULL,
             color VARCHAR NOT NULL,
             category VARCHAR NOT NULL,
-            style VARCHAR NOT NULL,
-            material VARCHAR NOT NULL,
+            brand VARCHAR NOT NULL,
+            gender VARCHAR NOT NULL,
             item_img_url VARCHAR NOT NULL
         );
         `
@@ -71,19 +71,19 @@ const seed = ({ itemData, userData }) => {
     .then(() => {
       const insertClothesData = format(
         `
-        INSERT INTO clothes (title, price, color, category, style, material, item_img_url)
+        INSERT INTO clothes (title, price, color, category, brand, gender, item_img_url)
          VALUES %L RETURNING *;
         `,
         itemData.map(
-          ({
+          ({ title, price, color, category, brand, gender, item_img_url }) => [
             title,
             price,
             color,
             category,
-            style,
-            material,
+            brand,
+            gender,
             item_img_url,
-          }) => [title, price, color, category, style, material, item_img_url]
+          ]
         )
       );
 
