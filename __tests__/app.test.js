@@ -51,6 +51,40 @@ describe("clothes-backend", () => {
         });
     });
   });
+  describe("GET /api/clothes/:clothes_id", () => {
+    test("test returns single clothes object with relevent properties and status 200", () => {
+      return request(app)
+        .get("/api/clothes/276")
+        .expect(200)
+        .then((response) => {
+          const singleItem = response.body.item;
+          expect(singleItem).toHaveProperty("clothes_id", 276);
+          expect(singleItem).toHaveProperty("title", expect.any(String));
+          expect(singleItem).toHaveProperty("price", expect.any(String));
+          expect(singleItem).toHaveProperty("color", expect.any(String));
+          expect(singleItem).toHaveProperty("category", expect.any(String));
+          expect(singleItem).toHaveProperty("brand", expect.any(String));
+          expect(singleItem).toHaveProperty("gender", expect.any(String));
+          expect(singleItem).toHaveProperty("item_img_url", expect.any(String));
+        });
+    });
+    test("invalid clothes id should return 404 Item not found", () => {
+      return request(app)
+        .get("/api/clothes/1000")
+        .expect(404)
+        .then((response) => {
+          expect(response.body.msg).toEqual('Item ID "1000" not found');
+        });
+    });
+    test("invalid request returns 400 ", () => {
+      return request(app)
+        .get("/api/clothes/cheese")
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toEqual("Bad Request");
+        });
+    });
+  });
   describe("fetchUserByUserId", () => {
     test("returns an existing user", () => {
       return request(app)
@@ -157,16 +191,6 @@ describe("clothes-backend", () => {
           }
         });
     });
-
-    //user does not exist? is string so valid
-    // test("400: Bad Request invalid user id ", () => {
-    //   return request(app)
-    //     .get("/api/users/cheese/suggested_clothes")
-    //     .expect(400)
-    //     .then(({ body }) => {
-    //       expect(body.msg).toBe("Bad Request");
-    //     });
-    // });
 
     test("404: Not Found when uid is not in db", () => {
       return request(app)

@@ -2,11 +2,22 @@ const fetchClothes = require("./models/fetchClothes");
 const fetchSuggestedClothes = require("./models/fetchSuggestedClothes");
 const fetchUserByUserId = require("./models/fetchUserByUserId");
 const patchUserPreferences = require("./models/patchUserPreferences");
+const fetchClothByClothesId = require("./models/fetchClothByClothesId");
 
 function getClothes(req, res, next) {
   fetchClothes()
     .then((clothes) => {
       res.status(200).send({ clothes });
+    })
+    .catch(next);
+}
+
+function getClothByClothesId(req, res, next) {
+  const { clothes_id } = req.params;
+
+  fetchClothByClothesId(clothes_id)
+    .then((item) => {
+      res.status(200).send({ item });
     })
     .catch(next);
 }
@@ -47,4 +58,5 @@ module.exports = {
   getSuggestedClothes,
   getUserByUserId,
   patchUserPreferencesByUserId,
+  getClothByClothesId,
 };
