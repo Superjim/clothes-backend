@@ -5,11 +5,34 @@ const fetchUserByUserId = require("./fetchUserByUserId");
 async function fetchSuggestedClothes(user_id) {
   const user = await fetchUserByUserId(user_id);
 
-  const sqlClothesQuery = `SELECT * FROM clothes;`;
+  //more items = more time and it doesnt look linear past 2/300 items
+  //when `SELECT * FROM clothes LIMIT x;`
+  // 100 = 147ms
+  // 200 = 323ms
+  // 300 = 546ms
+  // 400 = 847ms
+  // 500 = 1228ms
+  // 600 = 1638ms
+  // 700 = 2158ms
+  // 800 = 2743ms
+  // although it doesnt take long to select all the clothes (816 as of 22feb) from the database
+  // with that in mind:
 
+  //get all the clothes
+  const sqlClothesQuery = `SELECT * FROM clothes;`;
   const { rows: clothes } = await db.query(sqlClothesQuery);
 
-  const cosineSimilarityList = suggestionAlgorithmFunc(clothes, user);
+  //shuffle the clothes, this could work nicely because we want the randomness factor
+  for (let i = clothes.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [clothes[i], clothes[j]] = [clothes[j], clothes[i]];
+  }
+
+  //cut the array size down to 100 and filter on those 100 results only for the 10 most relevent
+  const selectedClothes = clothes.slice(0, 100);
+
+  const cosineSimilarityList = suggestionAlgorithmFunc(selectedClothes, user);
+  console.log(cosineSimilarityList);
   const suggestedClothes = [];
 
   cosineSimilarityList.forEach((suggetedItem) => {
