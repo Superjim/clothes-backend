@@ -1,7 +1,7 @@
 const format = require("pg-format");
 const db = require("../connection");
 
-const seed = ({ itemData, userData }) => {
+const seed = ({ itemData, userData, favouritesData }) => {
   return db
     .query(`DROP TABLE IF EXISTS favourites cascade;`)
     .then(() => {
@@ -104,7 +104,21 @@ const seed = ({ itemData, userData }) => {
       );
 
       return db.query(insertUsersData);
-    });
+    })
+    .then(() => {
+      const insertFavouritesData = format(
+        `
+        INSERT INTO favourites (uid, clothes_id) 
+        VALUES %L RETURNING *;
+        `,
+        favouritesData.map(({ uid, clothes_id }) => [
+          uid,
+          clothes_id
+        ])
+      );
+
+      return db.query(insertFavouritesData);
+    })
 };
 
 module.exports = seed;

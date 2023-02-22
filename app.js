@@ -10,6 +10,7 @@ const {
   getUserByUserId,
   patchUserPreferencesByUserId,
   getClothByClothesId,
+  getFavouritesByUserId,
 } = require("./controller.js");
 
 app.use(express.json());
@@ -17,6 +18,7 @@ app.use(express.json());
 app.get("/api/clothes", getClothes);
 app.get("/api/clothes/:clothes_id", getClothByClothesId);
 app.get("/api/users/:user_id", getUserByUserId);
+app.get("/api/favourites/:user_id", getFavouritesByUserId);
 app.patch("/api/users/:user_id/preferences", patchUserPreferencesByUserId);
 app.get("/api/users/:user_id/suggested_clothes", getSuggestedClothes);
 
