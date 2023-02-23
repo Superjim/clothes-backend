@@ -228,6 +228,19 @@ describe("clothes-backend", () => {
           expect(body.msg).toBe('User ID "12456641" not found');
         });
     });
+
+    test("excludes recent items", () => {
+      return request(app)
+        .get("/api/users/12342341/suggested_clothes")
+        .expect(200)
+        .then(({ body }) => {
+          const suggestedArr = body.suggestedClothes;
+
+          for (let i = 0; i < suggestedArr.length; i++) {
+            expect(suggestedArr[i].clothes_id).not.toBeLessThanOrEqual(40);
+          }
+        });
+    });
   });
 
   describe("GET /api/favourites/:user_id", () => {

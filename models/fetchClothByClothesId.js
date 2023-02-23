@@ -13,7 +13,6 @@ async function fetchClothByClothesId(clothes_id) {
 
     return item;
   } catch (error) {
-    console.log(error);
     throw error;
   }
 }
