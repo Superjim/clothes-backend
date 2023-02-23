@@ -11,7 +11,7 @@ async function fetchUserFavouriteClothes(user_id) {
         FROM clothes c 
         INNER JOIN favourites f 
         ON c.clothes_id = f.clothes_id 
-        WHERE uid = $1;
+        WHERE f.uid = $1;
         `;
 
     const { rows: userFavouriteClothes } = await db.query(
