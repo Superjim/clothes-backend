@@ -62,7 +62,7 @@ async function fetchSuggestedClothes(user_id) {
     [clothes[i], clothes[j]] = [clothes[j], clothes[i]];
   }
 
-  //cut the array size down to 100 and get 10 most relevent
+  //cut the array size down to 200 and get 10 most relevent
   const selectedClothes = clothes.slice(0, 200);
 
   const cosineSimilarityList = suggestionAlgorithmFunc(selectedClothes, user);
