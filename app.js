@@ -4,14 +4,10 @@ const express = require("express");
 const app = express();
 app.use(cors());
 
-const {
-  getClothes,
-  getSuggestedClothes,
-  getUserByUserId,
-  patchUserPreferencesByUserId,
-  getClothByClothesId,
-  getFavouritesByUserId,
-} = require("./controller.js");
+
+const { getClothes, getClothByClothesId, getSuggestedClothes } = require("./controllers/clothes.controller");
+const { getUserByUserId, patchUserPreferencesByUserId } = require("./controllers/users.controller");
+const { getFavouritesByUserId } = require("./controllers/favourites.controller");
 
 app.use(express.json());
 

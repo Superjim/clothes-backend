@@ -175,7 +175,7 @@ describe("clothes-backend", () => {
 		});
 	});
 
-	describe.only("GET /api/favourites/:user_id", () => {
+	describe("GET /api/favourites/:user_id", () => {
 		test("200: Get all favourites given a user id", () => {
 			return request(app)
 				.get("/api/favourites/12342341")
@@ -204,14 +204,14 @@ describe("clothes-backend", () => {
 				});
 		});
 
-    test('200: User with no favourites responds with empty array', () => {
-      return request(app)
-      .get("/api/favourites/32342341")
-      .expect(200)
-      .then(response => {
+		test('200: User with no favourites responds with empty array', () => {
+			return request(app)
+				.get("/api/favourites/32342341")
+				.expect(200)
+				.then(response => {
 
-        expect(response.body.favourites).toEqual([]);
-      })
-    });
+					expect(response.body.favourites).toEqual([]);
+				})
+		});
 	});
 });

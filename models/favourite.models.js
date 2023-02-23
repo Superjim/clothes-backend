@@ -1,8 +1,8 @@
 const db = require("../db/connection");
-const fetchUserByUserId = require("./fetchUserByUserId");
+const { fetchUserByUserId } = require("./user.models");
 
 
-async function fetchFavourties(user_id) {
+async function fetchFavourites(user_id) {
     await fetchUserByUserId(user_id);
     
 	const sqlString = `SELECT * FROM favourites WHERE uid = $1`;
@@ -12,4 +12,6 @@ async function fetchFavourties(user_id) {
 	return favourites;
 }
 
-module.exports = fetchFavourties;
+module.exports = {
+    fetchFavourites,
+};

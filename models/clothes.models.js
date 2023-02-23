@@ -1,6 +1,30 @@
 const db = require("../db/connection");
 const { suggestionAlgorithmFunc } = require("../utils/algorithm");
-const fetchUserByUserId = require("./fetchUserByUserId");
+const { fetchUserByUserId } = require("./user.models");
+
+async function fetchClothes() {
+    const clothes = await db.query(`SELECT * FROM clothes;`);
+  
+    return clothes.rows;
+}
+
+async function fetchClothByClothesId(clothes_id) {
+  const sqlString = `SELECT * FROM clothes WHERE clothes.clothes_id = $1`;
+  try {
+    const {
+      rows: [item],
+    } = await db.query(sqlString, [clothes_id]);
+
+    if (!item) {
+      throw { status: 404, msg: `Item ID "${clothes_id}" not found` };
+    }
+
+    return item;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
 
 async function fetchSuggestedClothes(user_id) {
   const user = await fetchUserByUserId(user_id);
@@ -43,4 +67,8 @@ async function fetchSuggestedClothes(user_id) {
   return suggestedClothes;
 }
 
-module.exports = fetchSuggestedClothes;
+module.exports = {
+    fetchClothes,
+    fetchClothByClothesId,
+    fetchSuggestedClothes,
+}
