@@ -7,7 +7,7 @@ app.use(cors());
 
 const { getClothes, getClothByClothesId, getSuggestedClothes } = require("./controllers/clothes.controller");
 const { getUserByUserId, patchUserPreferencesByUserId } = require("./controllers/users.controller");
-const { getFavouritesByUserId } = require("./controllers/favourites.controller");
+const { getFavouritesByUserId, postFavouritesByUserId } = require("./controllers/favourites.controller");
 
 app.use(express.json());
 
@@ -17,6 +17,7 @@ app.get("/api/users/:user_id", getUserByUserId);
 app.get("/api/favourites/:user_id", getFavouritesByUserId);
 app.patch("/api/users/:user_id/preferences", patchUserPreferencesByUserId);
 app.get("/api/users/:user_id/suggested_clothes", getSuggestedClothes);
+app.post("/api/favourites/:user_id", postFavouritesByUserId);
 
 app.use((req, res, next) => {
   res.status(404).send({ msg: "Path not found" });

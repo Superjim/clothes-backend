@@ -214,4 +214,98 @@ describe("clothes-backend", () => {
 				})
 		});
 	});
+
+	describe('POST /API/FAVOURITES/:USER_ID ', () => {
+		test('201: api point exists and returns', () => {
+			return request(app)
+            .post("/api/favourites/12342341")
+            .send({
+                "clothes_id": 1,
+            })
+            .expect(201);
+		});
+		test('201: returns back an object which has a property called favourite', () => { 
+			return request(app)
+                .post("/api/favourites/12342341")
+                .send({
+					"clothes_id": 1,
+                })
+                .expect(201)
+                .then(( { body }) => {
+                    expect(body).toBeInstanceOf(Object);
+					expect(body).toHaveProperty("favourite");
+					expect(body.favourite).toBeInstanceOf(Object);
+                });
+		 });
+		 test('201: returns back a favourite object with uid and clothes_id keys', () => {
+            return request(app)
+                .post("/api/favourites/12342341")
+                .expect(201)
+                .send({
+                    "clothes_id": 1,
+                })
+                .then(({ body }) => {               
+                    const favourite = body.favourite;
+                                       
+                    expect(favourite).toHaveProperty("uid", expect.any(String));
+                    expect(favourite).toHaveProperty("clothes_id", expect.any(Number));
+                });
+        });
+		test('201: returns back created favourite', () => { 
+			return request(app)
+                .post("/api/favourites/12342341")
+                .expect(201)
+                .send({
+                    "clothes_id": 1,
+                })
+                .then(({ body }) => {               
+                    const favourite = body.favourite;
+                                       
+                    expect(favourite.uid).toBe("12342341");
+                    expect(favourite.clothes_id).toBe(1);
+                });
+		 });
+		test('400: returns back bad request', () => {
+			return request(app)
+                .post("/api/favourites/12342341")
+                .expect(400)
+                .send()
+                .then(({ body }) => {               
+                    expect(body.msg).toBe("Bad request!");
+                });
+		});
+		test('400: returns back bad request when clothes_id has a String type', () => { 
+			return request(app)
+                .post("/api/favourites/12342341")
+                .expect(400)
+                .send({
+					"clothes_id": "1",
+				})
+                .then(({ body }) => {               
+                    expect(body.msg).toBe("Favourite clothes_id 1 should have a number type");
+                });
+		})
+		test('404: returns back a bad request if user is absent in DB', () => {
+			return request(app)
+                .post("/api/favourites/123423415")
+                .expect(404)
+                .send({
+					"clothes_id": 1,
+				})
+                .then(({ body }) => {               
+                    expect(body.msg).toBe('User ID "123423415" not found');
+                });
+		});
+		test('404: returns back a bad request if user is absent in DB', () => {
+			return request(app)
+                .post("/api/favourites/12342341")
+                .expect(404)
+                .send({
+					"clothes_id": 122222,
+				})
+                .then(({ body }) => {               
+                    expect(body.msg).toBe('Item ID "122222" not found');
+                });
+		});
+	});
 });
