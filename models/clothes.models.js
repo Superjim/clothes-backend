@@ -3,9 +3,9 @@ const { suggestionAlgorithmFunc } = require("../utils/algorithm");
 const { fetchUserByUserId } = require("./user.models");
 
 async function fetchClothes() {
-    const clothes = await db.query(`SELECT * FROM clothes;`);
-  
-    return clothes.rows;
+  const clothes = await db.query(`SELECT * FROM clothes;`);
+
+  return clothes.rows;
 }
 
 async function fetchClothByClothesId(clothes_id) {
@@ -21,7 +21,7 @@ async function fetchClothByClothesId(clothes_id) {
 
     return item;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     throw error;
   }
 }
@@ -44,7 +44,17 @@ async function fetchSuggestedClothes(user_id) {
 
   //get all the clothes
   const sqlClothesQuery = `SELECT * FROM clothes;`;
-  const { rows: clothes } = await db.query(sqlClothesQuery);
+  let { rows: clothes } = await db.query(sqlClothesQuery);
+
+  //get the users recent items, ordered by the time they were added
+  const sqlRecentItemsQuery = `SELECT clothes_id FROM recent_items WHERE uid = $1 ORDER BY created_at DESC LIMIT 100;`;
+  const { rows: recentItems } = await db.query(sqlRecentItemsQuery, [user_id]);
+
+  //array of recent item ids
+  const recentItemsIds = recentItems.map((item) => item.clothes_id);
+
+  //filter cloths to exclude the recent items
+  clothes = clothes.filter((item) => !recentItemsIds.includes(item.clothes_id));
 
   //shuffle the clothes, this could work nicely because we want the randomness factor
   for (let i = clothes.length - 1; i > 0; i--) {
@@ -52,8 +62,8 @@ async function fetchSuggestedClothes(user_id) {
     [clothes[i], clothes[j]] = [clothes[j], clothes[i]];
   }
 
-  //cut the array size down to 100 and filter on those 100 results only for the 10 most relevent
-  const selectedClothes = clothes.slice(0, 100);
+  //cut the array size down to 200 and get 10 most relevent
+  const selectedClothes = clothes.slice(0, 200);
 
   const cosineSimilarityList = suggestionAlgorithmFunc(selectedClothes, user);
   const suggestedClothes = [];
@@ -64,11 +74,17 @@ async function fetchSuggestedClothes(user_id) {
     suggestedClothes.push(...item);
   });
 
+  // add suggestedClothes to recent items table
+  const sqlAddRecentItemsQuery = `INSERT INTO recent_items (uid, clothes_id) VALUES ($1, $2)`;
+  for (const item of suggestedClothes) {
+    await db.query(sqlAddRecentItemsQuery, [user_id, item.clothes_id]);
+  }
+
   return suggestedClothes;
 }
 
 module.exports = {
-    fetchClothes,
-    fetchClothByClothesId,
-    fetchSuggestedClothes,
-}
+  fetchClothes,
+  fetchClothByClothesId,
+  fetchSuggestedClothes,
+};
