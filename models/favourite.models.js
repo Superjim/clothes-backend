@@ -2,14 +2,24 @@ const db = require("../db/connection");
 const { fetchUserByUserId } = require("./user.models");
 const { fetchClothByClothesId } = require("./clothes.models");
 
-async function fetchFavourites(user_id) {
+async function fetchUserFavouriteClothes(user_id) {
     await fetchUserByUserId(user_id);
     
-	const sqlString = `SELECT * FROM favourites WHERE uid = $1`;
+    try {
+        const selectUserFavouriteClothes = `
+        SELECT c.* 
+        FROM clothes c 
+        INNER JOIN favourites f 
+        ON c.clothes_id = f.clothes_id 
+        WHERE uid = $1;
+        `;
 
-	const { rows: favourites } = await db.query(sqlString, [user_id]);
+        const { rows: userFavouriteClothes } = await db.query(selectUserFavouriteClothes, [user_id])
 
-	return favourites;
+        return userFavouriteClothes;
+    } catch(error) {
+        throw error;
+    }
 }
 
 async function addFavourite(user_id, newFavourite) {
@@ -55,6 +65,6 @@ async function addFavourite(user_id, newFavourite) {
 }
 
 module.exports = {
-    fetchFavourites,
     addFavourite,
+    fetchUserFavouriteClothes,
 };
