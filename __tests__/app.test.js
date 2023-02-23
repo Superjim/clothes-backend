@@ -175,23 +175,43 @@ describe("clothes-backend", () => {
 		});
 	});
 
-	describe("GET /api/favourites/:user_id", () => {
-		test("200: Get all favourites given a user id", () => {
+	describe("GET /API/FAVOURITES/:USER_ID", () => {
+		test('200: api point exists and responds', () => {
+            return request(app)
+                .get("/api/favourites/12342341").expect(200);
+        });
+
+		test('200: returns back an object and has a property called userFavouriteClothes', () => {
+            return request(app)
+				.get("/api/favourites/12342341")
+                .expect(200)
+                .then(({ body }) => {
+                    expect(body).toBeInstanceOf(Object);
+                    expect(body).toHaveProperty("userFavouriteClothes");
+                    expect(body.userFavouriteClothes).toBeInstanceOf(Array);
+                });
+        });
+
+		test("200: Get all favourite clothes given a user id", () => {
 			return request(app)
 				.get("/api/favourites/12342341")
 				.expect(200)
-				.then((response) => {
-					const favouritesArr = response.body.favourites;
+				.then(({ body }) => {
+					const favouriteClothes = body.userFavouriteClothes;
 
-					expect(favouritesArr.length).toBe(5);
+					expect(favouriteClothes.length).toBe(5);
 
-					for (let i = 0; i < favouritesArr.length; i++) {
-						expect(typeof favouritesArr[i]).toBe("object");
-						expect(Array.isArray(favouritesArr[i])).toBe(false);
-						expect(favouritesArr[i]).toHaveProperty("favourite_id", expect.any(Number));
-						expect(favouritesArr[i]).toHaveProperty("uid", expect.any(String));
-						expect(favouritesArr[i]).toHaveProperty("clothes_id", expect.any(Number));
-					}
+					favouriteClothes.forEach(favouriteCloth => {
+						expect(favouriteCloth).toBeInstanceOf(Object);
+						expect(favouriteCloth).toHaveProperty("clothes_id", expect.any(Number));
+						expect(favouriteCloth).toHaveProperty("title", expect.any(String));
+						expect(favouriteCloth).toHaveProperty("price", expect.any(String));
+						expect(favouriteCloth).toHaveProperty("color", expect.any(String));
+						expect(favouriteCloth).toHaveProperty("category", expect.any(String));
+						expect(favouriteCloth).toHaveProperty("brand", expect.any(String));
+						expect(favouriteCloth).toHaveProperty("gender", expect.any(String));
+						expect(favouriteCloth).toHaveProperty("item_img_url", expect.any(String));
+					})
 				});
 		});
 
@@ -209,8 +229,7 @@ describe("clothes-backend", () => {
 				.get("/api/favourites/32342341")
 				.expect(200)
 				.then(response => {
-
-					expect(response.body.favourites).toEqual([]);
+					expect(response.body.userFavouriteClothes).toEqual([]);
 				})
 		});
 	});
@@ -224,6 +243,7 @@ describe("clothes-backend", () => {
             })
             .expect(201);
 		});
+
 		test('201: returns back an object which has a property called favourite', () => { 
 			return request(app)
                 .post("/api/favourites/12342341")
@@ -237,6 +257,7 @@ describe("clothes-backend", () => {
 					expect(body.favourite).toBeInstanceOf(Object);
                 });
 		 });
+
 		 test('201: returns back a favourite object with uid and clothes_id keys', () => {
             return request(app)
                 .post("/api/favourites/12342341")
@@ -251,6 +272,7 @@ describe("clothes-backend", () => {
                     expect(favourite).toHaveProperty("clothes_id", expect.any(Number));
                 });
         });
+
 		test('201: returns back created favourite', () => { 
 			return request(app)
                 .post("/api/favourites/12342341")
@@ -265,6 +287,7 @@ describe("clothes-backend", () => {
                     expect(favourite.clothes_id).toBe(1);
                 });
 		 });
+
 		test('400: returns back bad request', () => {
 			return request(app)
                 .post("/api/favourites/12342341")
@@ -274,6 +297,7 @@ describe("clothes-backend", () => {
                     expect(body.msg).toBe("Bad request!");
                 });
 		});
+
 		test('400: returns back bad request when clothes_id has a String type', () => { 
 			return request(app)
                 .post("/api/favourites/12342341")
@@ -284,7 +308,8 @@ describe("clothes-backend", () => {
                 .then(({ body }) => {               
                     expect(body.msg).toBe("Favourite clothes_id 1 should have a number type");
                 });
-		})
+		});
+
 		test('404: returns back a bad request if user is absent in DB', () => {
 			return request(app)
                 .post("/api/favourites/123423415")
@@ -296,6 +321,7 @@ describe("clothes-backend", () => {
                     expect(body.msg).toBe('User ID "123423415" not found');
                 });
 		});
+		
 		test('404: returns back a bad request if user is absent in DB', () => {
 			return request(app)
                 .post("/api/favourites/12342341")

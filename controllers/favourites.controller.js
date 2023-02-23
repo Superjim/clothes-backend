@@ -1,11 +1,11 @@
-const { fetchFavourites, addFavourite } = require("../models/favourite.models");
+const { addFavourite, fetchUserFavouriteClothes } = require("../models/favourite.models");
 
 function getFavouritesByUserId(req, res, next) {
   const { user_id } = req.params;
 
-  fetchFavourites(user_id)
-    .then((favourites) => {
-      res.status(200).send({ favourites });
+  fetchUserFavouriteClothes(user_id)
+    .then((userFavouriteClothes) => {
+      res.status(200).send({ userFavouriteClothes });
     })
     .catch(next);
 }
