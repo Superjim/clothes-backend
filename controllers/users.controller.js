@@ -15,9 +15,9 @@ function patchUserPreferencesByUserId(req, res, next) {
     const { preferences } = req.body;
   
     patchUserPreferences(user_id, preferences)
-      .then((msg) => {
-        res.status(200).send({ msg });
-      })
+    .then((user) => {
+      res.status(200).send({ user });
+    })
       .catch(next);
 }
 

@@ -34,10 +34,10 @@ async function addFavourite(user_id, newFavourite) {
             };
         }
         if(typeof newFavourite.clothes_id !== "number") {
-            return Promise.reject({
+            throw {
                 status: 400,
                 msg: `Favourite clothes_id ${newFavourite.clothes_id} should have a number type`,
-            })
+            };
         }
 
         await fetchUserByUserId(user_id);
