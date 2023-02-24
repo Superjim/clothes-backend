@@ -7,11 +7,11 @@ async function fetchUserFavouriteClothes(user_id) {
 
   try {
     const selectUserFavouriteClothes = `
-        SELECT c.* 
+        SELECT c.*, f.favourite_id  
         FROM clothes c 
         INNER JOIN favourites f 
         ON c.clothes_id = f.clothes_id 
-        WHERE uid = $1;
+        WHERE f.uid = $1;
         `;
 
     const { rows: userFavouriteClothes } = await db.query(
@@ -27,9 +27,6 @@ async function fetchUserFavouriteClothes(user_id) {
 
 async function addFavourite(user_id, newFavourite) {
   try {
-    // console.log(user_id);
-    // console.log(newFavourite.clothes_id);
-
     if (!newFavourite.clothes_id) {
       throw {
         status: 400,
@@ -64,7 +61,40 @@ async function addFavourite(user_id, newFavourite) {
   }
 }
 
+async function removeFavourite(favourite_id) {
+  try {
+    if (!parseInt(favourite_id)) {
+      throw { 
+          status: 400,
+          msg: `You passed ${favourite_id}. Favourite id should be a number.` 
+        };
+    }
+
+    const deleteFavourite = `
+      DELETE FROM favourites 
+      WHERE favourite_id = $1 
+      RETURNING *;
+    `;
+
+    const {
+      rowCount
+    } = await db.query(deleteFavourite, [favourite_id]);
+
+    if (rowCount === 0) {
+      throw {
+        status: 404,
+        msg: `Favourite with id ${favourite_id} does not exist in DB`,
+      };
+    }
+
+    return;
+  } catch (error) {
+      throw error;
+  }
+}
+
 module.exports = {
   addFavourite,
   fetchUserFavouriteClothes,
+  removeFavourite,
 };
