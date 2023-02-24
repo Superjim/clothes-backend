@@ -2,6 +2,16 @@ const ContentBasedRecommender = require("content-based-recommender");
 const recommender = new ContentBasedRecommender({
   maxSimilarDocuments: 100,
 });
+const getUserTags = require("./userPreferences");
+
+const topAndRandom = {
+  //n = number of top tags to include
+  //r = number of tags at random to inlude
+  title: { n: 1, r: 3 },
+  color: { n: 1, r: 1 },
+  brand: { n: 1, r: 1 },
+  category: { n: 1, r: 1 },
+};
 
 const formatData = (data, user) => {
   const formattedData = data.map((item) => {
@@ -17,7 +27,10 @@ const formatData = (data, user) => {
       item.gender;
     return { id: item.clothes_id, content: tagString };
   });
-  formattedData.push({ id: user.uid, content: user.preferences });
+  formattedData.push({
+    id: user.uid,
+    content: getUserTags(user.preferences, topAndRandom),
+  });
 
   return formattedData;
 };
