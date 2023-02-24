@@ -19,7 +19,7 @@ function getUserTags(jsonString, topAndRandom) {
   const allTags = [].concat(...Object.values(topTags));
 
   // Return the tags as a comma-separated string
-  return allTags.join(", ");
+  return allTags.join(" ");
 }
 
 module.exports = getUserTags;
