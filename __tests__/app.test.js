@@ -433,3 +433,299 @@ describe('DELETE /API/FAVOURITES/:FAVOURITE_ID', () => {
         });
   });
 })
+
+describe('GET /API/BASKETS/:USER_ID', () => {
+  test("200: api point exists and responds", () => {
+    return request(app).get("/api/baskets/12342341").expect(200);
+  });
+  test("200: returns back an object and has a property called userBasket", () => {
+    return request(app)
+      .get("/api/baskets/12342341")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toBeInstanceOf(Object);
+        expect(body).toHaveProperty("userBasket");
+        expect(body.userBasket).toBeInstanceOf(Array);
+      });
+  });
+  test("200: Get basket with all clothes chosen by user", () => {
+    return request(app)
+      .get("/api/baskets/12342341")
+      .expect(200)
+      .then(({ body }) => {
+        const userClothesBasket = body.userBasket;
+
+        expect(userClothesBasket.length).toBe(5);
+
+        userClothesBasket.forEach((clothes) => {
+          expect(clothes).toBeInstanceOf(Object);
+          expect(clothes).toHaveProperty(
+            "clothes_id",
+            expect.any(Number)
+          );
+          expect(clothes).toHaveProperty("title", expect.any(String));
+          expect(clothes).toHaveProperty("price", expect.any(String));
+          expect(clothes).toHaveProperty("color", expect.any(String));
+          expect(clothes).toHaveProperty("category", expect.any(String));
+          expect(clothes).toHaveProperty("brand", expect.any(String));
+          expect(clothes).toHaveProperty("gender", expect.any(String));
+          expect(clothes).toHaveProperty(
+            "item_img_url",
+            expect.any(String)
+          );
+          expect(clothes).toHaveProperty("basket_count", expect.any(Number));
+          expect(clothes).toHaveProperty("basket_id", expect.any(Number));
+        });
+      });
+  });
+  test("404: User id not found", () => {
+    return request(app)
+      .get("/api/baskets/1000000000")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toEqual('User ID "1000000000" not found');
+      });
+  });
+  test("200: User with empty basket responds with empty array", () => {
+    return request(app)
+      .get("/api/baskets/32342341")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.userBasket).toEqual([]);
+      });
+  });
+});
+
+describe("POST /API/BASKETS/:USER_ID ", () => {
+  test("201: api point exists and returns", () => {
+    return request(app)
+      .post("/api/baskets/12342341")
+      .send({
+        clothes_id: 6,
+      })
+      .expect(201);
+  });
+  test("201: returns back an object which has a property called basket", () => {
+    return request(app)
+      .post("/api/baskets/12342341")
+      .send({
+        clothes_id: 1,
+      })
+      .expect(201)
+      .then(({ body }) => {
+        expect(body).toBeInstanceOf(Object);
+        expect(body).toHaveProperty("clothesBasket");
+        expect(body.clothesBasket).toBeInstanceOf(Object);
+      });
+  });
+  test("201: returns back a clothesBasket object with basket_count, uid and clothes_id keys", () => {
+    return request(app)
+      .post("/api/baskets/12342341")
+      .expect(201)
+      .send({
+        clothes_id: 1,
+      })
+      .then(({ body }) => {
+        const clothesBasket = body.clothesBasket;
+
+        expect(clothesBasket).toHaveProperty("basket_id", expect.any(Number));
+        expect(clothesBasket).toHaveProperty("uid", expect.any(String));
+        expect(clothesBasket).toHaveProperty("clothes_id", expect.any(Number));
+      });
+  });
+  test("201: returns back created basket", () => {
+    return request(app)
+      .post("/api/baskets/12342341")
+      .expect(201)
+      .send({
+        clothes_id: 6,
+      })
+      .then(({ body }) => {
+        const clothesBasket = body.clothesBasket;
+
+        expect(clothesBasket.basket_count).toBe(1);
+        expect(clothesBasket.uid).toBe("12342341");
+        expect(clothesBasket.clothes_id).toBe(6);
+      });
+  });
+  test("400: returns back bad request", () => {
+    return request(app)
+      .post("/api/baskets/12342341")
+      .expect(400)
+      .send()
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request!");
+      });
+  });
+  test("400: returns back bad request when clothes_id has a String type", () => {
+    return request(app)
+      .post("/api/baskets/12342341")
+      .expect(400)
+      .send({
+        clothes_id: "1",
+      })
+      .then(({ body }) => {
+        expect(body.msg).toBe(
+          "Basket clothes_id 1 should have a number type"
+        );
+      });
+  });
+  test("404: returns back a bad request if user is absent in DB", () => {
+    return request(app)
+      .post("/api/baskets/123423415")
+      .expect(404)
+      .send({
+        clothes_id: 1,
+      })
+      .then(({ body }) => {
+        expect(body.msg).toBe('User ID "123423415" not found');
+      });
+  });
+  test("404: returns back a bad request if user is absent in DB", () => {
+    return request(app)
+      .post("/api/baskets/12342341")
+      .expect(404)
+      .send({
+        clothes_id: 122222,
+      })
+      .then(({ body }) => {
+        expect(body.msg).toBe('Item ID "122222" not found');
+      });
+  });
+});
+
+describe('DELETE /API/BASKETS/:BASKET_ID', () => { 
+  test('204: api point exists and returns', () => { 
+    return request(app)
+      .delete("/api/baskets/1")
+      .expect(204);
+  })
+  test('204: response should be empty', () => {
+      return request(app)
+        .delete("/api/baskets/1")
+        .then(({ body }) => {
+          expect(body).toEqual({});
+        });
+  });
+  test('404: returns back an error when Basket does not exist in DB', () => { 
+    return request(app)
+      .delete("/api/baskets/2000")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Basket with id 2000 does not exist in DB");
+      });
+  })
+  test('404: returns back an error Invalid input when Basket ID does not exist', () => {
+      return request(app)
+        .delete("/api/baskets/notAnId")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("You passed notAnId. Basket id should be a number.");
+        });
+  });
+})
+
+describe('PATCH /API/BASKETS/:BASKET_ID', () => {
+  test('Status 200 - api point exists and responds', () => {
+      return request(app)
+          .patch("/api/baskets/2")
+          .send({
+              "clothes_count": 1,
+          })
+          .expect(200);
+  });
+  test('Status 200 - returns back an object which has a property called clothesBasket', () => {
+      return request(app)
+          .patch("/api/baskets/1")
+          .send({
+              "clothes_count": 1,
+          })
+          .expect(200)
+          .then(({ body }) => {
+              expect(body).toBeInstanceOf(Object);
+              expect(body).toHaveProperty("clothesBasket");
+              expect(body.clothesBasket).toBeInstanceOf(Object);
+          });
+  });
+  test('Status 200 - returns back a basket with the correct keys', () => {
+      return request(app)
+          .patch("/api/baskets/1")
+          .send({
+              "clothes_count": 1,
+          })
+          .expect(200)
+          .then(({ body }) => {
+              const { clothesBasket } = body;
+              
+              expect(clothesBasket).toHaveProperty("basket_id", expect.any(Number));
+              expect(clothesBasket).toHaveProperty("clothes_id", expect.any(Number));
+              expect(clothesBasket).toHaveProperty("uid", expect.any(String));
+              expect(clothesBasket).toHaveProperty("basket_count", expect.any(Number));
+          });
+  });
+  test('Status 200 - returns back a clothes from basket with count property icreased on 1', () => {   
+      return request(app)
+          .patch("/api/baskets/1")
+          .send({
+              "clothes_count": 1
+          })
+          .expect(200)
+          .then(({ body }) => {
+              const { clothesBasket } = body;
+
+              expect(clothesBasket.basket_count).toBe(3);
+          });
+  });
+  test('Status 200 - returns back a basket with count property decreased on 1', () => {   
+      return request(app)
+          .patch("/api/baskets/1")
+          .send({
+              "clothes_count": -1
+          })
+          .expect(200)
+          .then(({ body }) => {
+              const { clothesBasket } = body;
+
+              expect(clothesBasket.basket_count).toBe(1);
+          });
+  });
+  test('Status 400 - returns back bad request', () => {
+      return request(app)
+          .patch("/api/baskets/1")
+          .send()
+          .expect(400)
+          .then(({ body }) => {
+              expect(body.msg).toBe("Bad request!");
+          });
+  });
+  test('Status 400 - returns back bad request when count has a String type', () => {
+      return request(app)
+          .patch("/api/baskets/1")
+          .send({
+              "clothes_count": "123",
+          })
+          .expect(400)
+          .then(({ body }) => {
+              expect(body.msg).toBe("clothes_count 123 property should have a number type");
+          });
+  });
+  test('Status 404 - returns back a bad request if basket_id does not exist in DB', () => {
+      return request(app)
+          .patch("/api/baskets/1000")
+          .send({
+              "clothes_count": 1
+          })
+          .expect(404)
+          .then(({ body }) => {
+              expect(body.msg).toBe("Basket with id 1000 does not exist in DB")
+          })
+  });
+  test('Status 400 - returns back an error Invalid input', () => {
+      return request(app)
+          .patch("/api/baskets/notAnId")
+          .expect(400)
+          .then(({ body }) => {
+              expect(body.msg).toBe("You passed notAnId. Basket id should be a number.");
+          })
+  });
+});

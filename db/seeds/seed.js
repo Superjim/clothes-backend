@@ -1,7 +1,7 @@
 const format = require("pg-format");
 const db = require("../connection");
 
-const seed = ({ itemData, userData, favouritesData, recentData }) => {
+const seed = ({ itemData, userData, favouritesData, recentData, basketData }) => {
   return db
     .query(`DROP TABLE IF EXISTS favourites cascade;`)
     .then(() => {
@@ -63,6 +63,7 @@ const seed = ({ itemData, userData, favouritesData, recentData }) => {
         `
         CREATE TABLE baskets (
           basket_id SERIAL PRIMARY KEY,
+          basket_count INT DEFAULT 1,
           clothes_id INT NOT NULL REFERENCES clothes(clothes_id),
           uid VARCHAR NOT NULL REFERENCES users(uid)
         );
@@ -143,6 +144,17 @@ const seed = ({ itemData, userData, favouritesData, recentData }) => {
       );
 
       return db.query(insertRecentData);
+    })
+    .then(() => {
+      const insertBasketData = format(
+        `
+        INSERT INTO baskets (basket_count, uid, clothes_id) 
+        VALUES %L RETURNING *;
+        `,
+        basketData.map(({ basket_count, uid, clothes_id }) => [basket_count, uid, clothes_id])
+      );
+
+      return db.query(insertBasketData);
     });
 };
 
