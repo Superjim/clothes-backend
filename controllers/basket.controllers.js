@@ -1,4 +1,4 @@
-const { fetchUserBasket, addClothesToBasket, removeBasket } = require("../models/basket.models");
+const { fetchUserBasket, addClothesToBasket, removeBasket, updateCountOfClothesInBasket } = require("../models/basket.models");
 
 function getBasketByUserId(req, res, next) {
   const { user_id } = req.params;
@@ -31,8 +31,20 @@ function deleteBasket(req, res, next) {
     .catch(next);
 }
 
+function patchBasket(req, res, next) {
+  const { basket_id } = req.params;
+  const basketBody = req.body;
+
+  updateCountOfClothesInBasket(basket_id, basketBody)
+    .then((clothesBasket) => {
+      res.status(200).send({ clothesBasket });
+    })
+    .catch(next);
+};
+
 module.exports = {
   getBasketByUserId,
   postClothesToBasketByUserId,
   deleteBasket,
+  patchBasket,
 };

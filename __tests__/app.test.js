@@ -624,3 +624,108 @@ describe('DELETE /API/BASKETS/:BASKET_ID', () => {
         });
   });
 })
+
+describe('PATCH /API/BASKETS/:BASKET_ID', () => {
+  test('Status 200 - api point exists and responds', () => {
+      return request(app)
+          .patch("/api/baskets/2")
+          .send({
+              "clothes_count": 1,
+          })
+          .expect(200);
+  });
+  test('Status 200 - returns back an object which has a property called clothesBasket', () => {
+      return request(app)
+          .patch("/api/baskets/1")
+          .send({
+              "clothes_count": 1,
+          })
+          .expect(200)
+          .then(({ body }) => {
+              expect(body).toBeInstanceOf(Object);
+              expect(body).toHaveProperty("clothesBasket");
+              expect(body.clothesBasket).toBeInstanceOf(Object);
+          });
+  });
+  test('Status 200 - returns back a basket with the correct keys', () => {
+      return request(app)
+          .patch("/api/baskets/1")
+          .send({
+              "clothes_count": 1,
+          })
+          .expect(200)
+          .then(({ body }) => {
+              const { clothesBasket } = body;
+              
+              expect(clothesBasket).toHaveProperty("basket_id", expect.any(Number));
+              expect(clothesBasket).toHaveProperty("clothes_id", expect.any(Number));
+              expect(clothesBasket).toHaveProperty("uid", expect.any(String));
+              expect(clothesBasket).toHaveProperty("basket_count", expect.any(Number));
+          });
+  });
+  test('Status 200 - returns back a clothes from basket with count property icreased on 1', () => {   
+      return request(app)
+          .patch("/api/baskets/1")
+          .send({
+              "clothes_count": 1
+          })
+          .expect(200)
+          .then(({ body }) => {
+              const { clothesBasket } = body;
+
+              expect(clothesBasket.basket_count).toBe(3);
+          });
+  });
+  test('Status 200 - returns back a basket with count property decreased on 1', () => {   
+      return request(app)
+          .patch("/api/baskets/1")
+          .send({
+              "clothes_count": -1
+          })
+          .expect(200)
+          .then(({ body }) => {
+              const { clothesBasket } = body;
+
+              expect(clothesBasket.basket_count).toBe(1);
+          });
+  });
+  test('Status 400 - returns back bad request', () => {
+      return request(app)
+          .patch("/api/baskets/1")
+          .send()
+          .expect(400)
+          .then(({ body }) => {
+              expect(body.msg).toBe("Bad request!");
+          });
+  });
+  test('Status 400 - returns back bad request when count has a String type', () => {
+      return request(app)
+          .patch("/api/baskets/1")
+          .send({
+              "clothes_count": "123",
+          })
+          .expect(400)
+          .then(({ body }) => {
+              expect(body.msg).toBe("clothes_count 123 property should have a number type");
+          });
+  });
+  test('Status 404 - returns back a bad request if basket_id does not exist in DB', () => {
+      return request(app)
+          .patch("/api/baskets/1000")
+          .send({
+              "clothes_count": 1
+          })
+          .expect(404)
+          .then(({ body }) => {
+              expect(body.msg).toBe("Basket with id 1000 does not exist in DB")
+          })
+  });
+  test('Status 400 - returns back an error Invalid input', () => {
+      return request(app)
+          .patch("/api/baskets/notAnId")
+          .expect(400)
+          .then(({ body }) => {
+              expect(body.msg).toBe("You passed notAnId. Basket id should be a number.");
+          })
+  });
+});

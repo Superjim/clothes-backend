@@ -19,7 +19,6 @@ async function fetchUserBasket(user_id) {
       [user_id]
     );
 
-    console.log(userBasket);
     return userBasket;
   } catch (error) {
     throw error;
@@ -94,8 +93,57 @@ async function removeBasket(basket_id) {
   }
 }
 
+async function updateCountOfClothesInBasket(basket_id, basketBody) {
+  try {
+    if (!parseInt(basket_id)) {
+      throw { 
+        status: 400,
+        msg: `You passed ${basket_id}. Basket id should be a number.` };
+    }
+  
+    if (!basketBody.clothes_count) {
+        throw {
+          status: 400,
+          msg: "Bad request!",
+        };
+    }
+  
+    if (typeof basketBody.clothes_count !== "number") {
+        throw {
+            status: 400,
+            msg: `clothes_count ${basketBody.clothes_count} property should have a number type`
+        };
+    }
+  
+    const setNewCount = `
+        UPDATE baskets 
+        SET basket_count = basket_count + $1 
+        WHERE basket_id = $2 
+        RETURNING *;
+    `;
+  
+    const {
+      rowCount,
+      rows: [basket],
+    } = await db.query(setNewCount, [basketBody.clothes_count, basket_id]);
+  
+    if (rowCount === 0) {
+      throw {
+        status: 404,
+        msg: `Basket with id ${basket_id} does not exist in DB`,
+      };
+    }
+    
+    return basket;
+  }
+  catch (error) {
+    throw error;
+  }
+}
+
 module.exports = {
   fetchUserBasket,
   addClothesToBasket,
   removeBasket,
+  updateCountOfClothesInBasket,
 }
