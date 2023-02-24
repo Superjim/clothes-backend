@@ -593,3 +593,34 @@ describe("POST /API/BASKETS/:USER_ID ", () => {
       });
   });
 });
+
+describe('DELETE /API/BASKETS/:BASKET_ID', () => { 
+  test('204: api point exists and returns', () => { 
+    return request(app)
+      .delete("/api/baskets/1")
+      .expect(204);
+  })
+  test('204: response should be empty', () => {
+      return request(app)
+        .delete("/api/baskets/1")
+        .then(({ body }) => {
+          expect(body).toEqual({});
+        });
+  });
+  test('404: returns back an error when Basket does not exist in DB', () => { 
+    return request(app)
+      .delete("/api/baskets/2000")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Basket with id 2000 does not exist in DB");
+      });
+  })
+  test('404: returns back an error Invalid input when Basket ID does not exist', () => {
+      return request(app)
+        .delete("/api/baskets/notAnId")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("You passed notAnId. Basket id should be a number.");
+        });
+  });
+})

@@ -62,7 +62,40 @@ async function addClothesToBasket(user_id, newClothes) {
   }
 }
 
+async function removeBasket(basket_id) {
+  try {
+    if (!parseInt(basket_id)) {
+      throw { 
+          status: 400,
+          msg: `You passed ${basket_id}. Basket id should be a number.` 
+        };
+    }
+
+    const deleteBasket = `
+      DELETE FROM baskets 
+      WHERE basket_id = $1 
+      RETURNING *;
+    `;
+
+    const {
+      rowCount
+    } = await db.query(deleteBasket, [basket_id]);
+
+    if (rowCount === 0) {
+      throw {
+        status: 404,
+        msg: `Basket with id ${basket_id} does not exist in DB`,
+      };
+    }
+
+    return;
+  } catch (error) {
+      throw error;
+  }
+}
+
 module.exports = {
   fetchUserBasket,
   addClothesToBasket,
+  removeBasket,
 }

@@ -1,4 +1,4 @@
-const { fetchUserBasket, addClothesToBasket } = require("../models/basket.models");
+const { fetchUserBasket, addClothesToBasket, removeBasket } = require("../models/basket.models");
 
 function getBasketByUserId(req, res, next) {
   const { user_id } = req.params;
@@ -21,7 +21,18 @@ function postClothesToBasketByUserId(req, res, next) {
     .catch(next);
 }
 
+function deleteBasket(req, res, next) {
+  const { basket_id } = req.params;
+  
+  removeBasket(basket_id)
+    .then(() => {
+      res.status(204).send();
+    })
+    .catch(next);
+}
+
 module.exports = {
   getBasketByUserId,
   postClothesToBasketByUserId,
+  deleteBasket,
 };
