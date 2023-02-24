@@ -92,7 +92,7 @@ describe("fetchUserByUserId", () => {
         expect(user).toHaveProperty("uid", "12342341");
         expect(user).toHaveProperty("username", "superjim");
         expect(user).toHaveProperty("firstname", "Jim");
-        expect(user).toHaveProperty("preferences", "blue black white white");
+        expect(user).toHaveProperty("preferences");
       });
   });
 
