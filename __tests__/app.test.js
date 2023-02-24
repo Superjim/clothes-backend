@@ -495,3 +495,101 @@ describe('GET /API/BASKETS/:USER_ID', () => {
       });
   });
 });
+
+describe("POST /API/BASKETS/:USER_ID ", () => {
+  test("201: api point exists and returns", () => {
+    return request(app)
+      .post("/api/baskets/12342341")
+      .send({
+        clothes_id: 6,
+      })
+      .expect(201);
+  });
+  test("201: returns back an object which has a property called basket", () => {
+    return request(app)
+      .post("/api/baskets/12342341")
+      .send({
+        clothes_id: 1,
+      })
+      .expect(201)
+      .then(({ body }) => {
+        expect(body).toBeInstanceOf(Object);
+        expect(body).toHaveProperty("clothesBasket");
+        expect(body.clothesBasket).toBeInstanceOf(Object);
+      });
+  });
+  test("201: returns back a clothesBasket object with basket_count, uid and clothes_id keys", () => {
+    return request(app)
+      .post("/api/baskets/12342341")
+      .expect(201)
+      .send({
+        clothes_id: 1,
+      })
+      .then(({ body }) => {
+        const clothesBasket = body.clothesBasket;
+
+        expect(clothesBasket).toHaveProperty("basket_id", expect.any(Number));
+        expect(clothesBasket).toHaveProperty("uid", expect.any(String));
+        expect(clothesBasket).toHaveProperty("clothes_id", expect.any(Number));
+      });
+  });
+  test("201: returns back created basket", () => {
+    return request(app)
+      .post("/api/baskets/12342341")
+      .expect(201)
+      .send({
+        clothes_id: 6,
+      })
+      .then(({ body }) => {
+        const clothesBasket = body.clothesBasket;
+
+        expect(clothesBasket.basket_count).toBe(1);
+        expect(clothesBasket.uid).toBe("12342341");
+        expect(clothesBasket.clothes_id).toBe(6);
+      });
+  });
+  test("400: returns back bad request", () => {
+    return request(app)
+      .post("/api/baskets/12342341")
+      .expect(400)
+      .send()
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request!");
+      });
+  });
+  test("400: returns back bad request when clothes_id has a String type", () => {
+    return request(app)
+      .post("/api/baskets/12342341")
+      .expect(400)
+      .send({
+        clothes_id: "1",
+      })
+      .then(({ body }) => {
+        expect(body.msg).toBe(
+          "Basket clothes_id 1 should have a number type"
+        );
+      });
+  });
+  test("404: returns back a bad request if user is absent in DB", () => {
+    return request(app)
+      .post("/api/baskets/123423415")
+      .expect(404)
+      .send({
+        clothes_id: 1,
+      })
+      .then(({ body }) => {
+        expect(body.msg).toBe('User ID "123423415" not found');
+      });
+  });
+  test("404: returns back a bad request if user is absent in DB", () => {
+    return request(app)
+      .post("/api/baskets/12342341")
+      .expect(404)
+      .send({
+        clothes_id: 122222,
+      })
+      .then(({ body }) => {
+        expect(body.msg).toBe('Item ID "122222" not found');
+      });
+  });
+});

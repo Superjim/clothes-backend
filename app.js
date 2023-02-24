@@ -8,7 +8,7 @@ app.use(cors());
 const { getClothes, getClothByClothesId, getSuggestedClothes } = require("./controllers/clothes.controller");
 const { getUserByUserId, patchUserPreferencesByUserId } = require("./controllers/users.controller");
 const { getFavouritesByUserId, postFavouritesByUserId, deleteFavourite } = require("./controllers/favourites.controller");
-const { getBasketByUserId } = require("./controllers/basket.controllers");
+const { getBasketByUserId, postClothesToBasketByUserId } = require("./controllers/basket.controllers");
 
 app.use(express.json());
 
@@ -23,6 +23,7 @@ app.post("/api/favourites/:user_id", postFavouritesByUserId);
 app.delete("/api/favourites/:favourite_id", deleteFavourite);
 
 app.get("/api/baskets/:user_id", getBasketByUserId);
+app.post("/api/baskets/:user_id", postClothesToBasketByUserId);
 
 app.use((req, res, next) => {
   res.status(404).send({ msg: "Path not found" });
