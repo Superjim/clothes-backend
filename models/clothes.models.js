@@ -76,9 +76,10 @@ async function fetchSuggestedClothes(user_id) {
 
   // add suggestedClothes to recent items table
   const sqlAddRecentItemsQuery = `INSERT INTO recent_items (uid, clothes_id) VALUES ($1, $2)`;
-  for (const item of suggestedClothes) {
-    await db.query(sqlAddRecentItemsQuery, [user_id, item.clothes_id]);
-  }
+  const insertPromises = suggestedClothes.map((item) => {
+    return db.query(sqlAddRecentItemsQuery, [user_id, item.clothes_id]);
+  });
+  await Promise.all(insertPromises);
 
   return suggestedClothes;
 }
