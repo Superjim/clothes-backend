@@ -433,3 +433,65 @@ describe('DELETE /API/FAVOURITES/:FAVOURITE_ID', () => {
         });
   });
 })
+
+describe('GET /API/BASKETS/:USER_ID', () => {
+  test("200: api point exists and responds", () => {
+    return request(app).get("/api/baskets/12342341").expect(200);
+  });
+  test("200: returns back an object and has a property called userBasket", () => {
+    return request(app)
+      .get("/api/baskets/12342341")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toBeInstanceOf(Object);
+        expect(body).toHaveProperty("userBasket");
+        expect(body.userBasket).toBeInstanceOf(Array);
+      });
+  });
+  test("200: Get basket with all clothes chosen by user", () => {
+    return request(app)
+      .get("/api/baskets/12342341")
+      .expect(200)
+      .then(({ body }) => {
+        const userClothesBasket = body.userBasket;
+
+        expect(userClothesBasket.length).toBe(5);
+
+        userClothesBasket.forEach((clothes) => {
+          expect(clothes).toBeInstanceOf(Object);
+          expect(clothes).toHaveProperty(
+            "clothes_id",
+            expect.any(Number)
+          );
+          expect(clothes).toHaveProperty("title", expect.any(String));
+          expect(clothes).toHaveProperty("price", expect.any(String));
+          expect(clothes).toHaveProperty("color", expect.any(String));
+          expect(clothes).toHaveProperty("category", expect.any(String));
+          expect(clothes).toHaveProperty("brand", expect.any(String));
+          expect(clothes).toHaveProperty("gender", expect.any(String));
+          expect(clothes).toHaveProperty(
+            "item_img_url",
+            expect.any(String)
+          );
+          expect(clothes).toHaveProperty("basket_count", expect.any(Number));
+          expect(clothes).toHaveProperty("basket_id", expect.any(Number));
+        });
+      });
+  });
+  test("404: User id not found", () => {
+    return request(app)
+      .get("/api/baskets/1000000000")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toEqual('User ID "1000000000" not found');
+      });
+  });
+  test("200: User with empty basket responds with empty array", () => {
+    return request(app)
+      .get("/api/baskets/32342341")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.userBasket).toEqual([]);
+      });
+  });
+});
