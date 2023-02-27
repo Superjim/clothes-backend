@@ -81,7 +81,123 @@ async function fetchSuggestedClothes(user_id) {
   });
   await Promise.all(insertPromises);
 
-  return suggestedClothes;
+  if (suggestedClothes.length === 10) {
+    return suggestedClothes;
+  } else {
+    return [
+      {
+        clothes_id: 293,
+        title: "adidas Originals adicolor Next Colorado sweatpants in black",
+        price: "£65.00",
+        color: "Black",
+        category: "joggers",
+        brand: "adidas Originals",
+        gender: "male",
+        item_img_url:
+          "images.asos-media.com/products/adidas-originals-adicolor-next-colorado-sweatpants-in-black/203895258-1-black",
+      },
+      {
+        clothes_id: 773,
+        title: "adidas Originals adicolor Next Colorado sweatpants in black",
+        price: "£65.00",
+        color: "Black",
+        category: "tracksuits",
+        brand: "adidas Originals",
+        gender: "male",
+        item_img_url:
+          "images.asos-media.com/products/adidas-originals-adicolor-next-colorado-sweatpants-in-black/203895258-1-black",
+      },
+      {
+        clothes_id: 633,
+        title: "ASOS DESIGN sliders in red",
+        price: "£23.00",
+        color: "RED",
+        category: "shoes",
+        brand: "ASOS DESIGN",
+        gender: "male",
+        item_img_url:
+          "images.asos-media.com/products/asos-design-sliders-in-red/203986149-1-red",
+      },
+      {
+        clothes_id: 303,
+        title: "adidas Originals Tall New C sweatpants in black",
+        price: "£70.00",
+        color: "Black",
+        category: "joggers",
+        brand: "adidas Originals",
+        gender: "male",
+        item_img_url:
+          "images.asos-media.com/products/adidas-originals-tall-new-c-sweatpants-in-black/203885956-1-black",
+      },
+      {
+        clothes_id: 160,
+        title: "adidas Originals adicolor Next Colorado hoodie in black",
+        price: "£70.00",
+        color: "Black",
+        category: "hoodies",
+        brand: "adidas Originals",
+        gender: "male",
+        item_img_url:
+          "images.asos-media.com/products/adidas-originals-adicolor-next-colorado-hoodie-in-black/203894713-1-black",
+      },
+      {
+        clothes_id: 656,
+        title: "adidas Originals Forum 84 mid sneakers in black",
+        price: "£120.00",
+        color: "Black",
+        category: "shoes",
+        brand: "adidas Originals",
+        gender: "male",
+        item_img_url:
+          "images.asos-media.com/products/adidas-originals-forum-84-mid-sneakers-in-black/203888492-1-black",
+      },
+      {
+        clothes_id: 772,
+        title: "adidas Originals Essentials+ fluffy joggers in off-white",
+        price: "£75.00",
+        color: "CREAM",
+        category: "tracksuits",
+        brand: "adidas Originals",
+        gender: "male",
+        item_img_url:
+          "images.asos-media.com/products/adidas-originals-essentials-fluffy-joggers-in-off-white/203894658-1-cream",
+      },
+      {
+        clothes_id: 290,
+        title: "adidas Originals tall 3-Stripes sweatpants in blue",
+        price: "£65.00",
+        color: "MID BLUE",
+        category: "joggers",
+        brand: "adidas Originals",
+        gender: "male",
+        item_img_url:
+          "images.asos-media.com/products/adidas-originals-tall-3-stripes-sweatpants-in-blue/203885915-1-midblue",
+      },
+      {
+        clothes_id: 182,
+        title:
+          "adidas Originals 'Preppy Varsity' large logo sweatshirt in beige",
+        price: "£60.00",
+        color: "BEIGE",
+        category: "hoodies",
+        brand: "adidas Originals",
+        gender: "male",
+        item_img_url:
+          "images.asos-media.com/products/adidas-originals-preppy-varsity-large-logo-sweatshirt-in-beige/203732702-1-beige",
+      },
+      {
+        clothes_id: 508,
+        title: "Farah Brewer cotton slim fit shirt in green",
+        price: "£112.00",
+        color: "Green",
+        category: "shirts",
+        brand: "Farah",
+        gender: "male",
+        item_img_url:
+          "images.asos-media.com/products/farah-brewer-cotton-slim-fit-shirt-in-green/203511012-1-green",
+      },
+    ];
+  }
 }
 
 module.exports = {
