@@ -35,10 +35,10 @@ const seed = ({ itemData, userData, favouritesData, recentData, basketData }) =>
       const usersTablePromise = db.query(
         `
             CREATE TABLE users (
-                uid VARCHAR PRIMARY KEY,
+                uid VARCHAR PRIMARY KEY NOT NULL,
                 username VARCHAR NOT NULL,
                 firstname VARCHAR NOT NULL,
-                preferences VARCHAR
+                preferences VARCHAR NOT NULL
             );
             `
       );

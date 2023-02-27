@@ -55,7 +55,38 @@ async function patchUserPreferences(user_id, preferences) {
   }
 }
 
+async function addNewUser (newUser) {
+
+  try {
+
+    if (!newUser.uid || !newUser.username || !newUser.firstname || !newUser.preferences) {
+      throw {
+        status: 400,
+        msg: "Bad request!",
+      };
+    }
+
+    const newUserData = [newUser.uid, newUser.username, newUser.firstname, newUser.preferences];
+
+    const sqlPostQuery = `
+        INSERT INTO users
+        (uid, username, firstname, preferences)
+        VALUES ($1, $2, $3, $4) RETURNING *; 
+        `;
+
+    const {
+      rows: [user],
+    } = await db.query(sqlPostQuery, newUserData);
+
+    return user;
+
+  } catch (error) {
+    throw error;
+  }
+}
+
 module.exports = {
   fetchUserByUserId,
   patchUserPreferences,
+  addNewUser
 };
