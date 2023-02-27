@@ -7,10 +7,10 @@ const getUserTags = require("./userPreferences");
 const topAndRandom = {
   //n = number of top tags to include
   //r = number of tags at random to inlude
-  title: { n: 1, r: 3 },
-  color: { n: 1, r: 1 },
-  brand: { n: 1, r: 1 },
-  category: { n: 1, r: 1 },
+  title: { n: 1, r: 0 },
+  color: { n: 1, r: 0 },
+  brand: { n: 1, r: 0 },
+  category: { n: 1, r: 0 },
 };
 
 const formatData = (data, user) => {
