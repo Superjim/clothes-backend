@@ -4,9 +4,8 @@ const express = require("express");
 const app = express();
 app.use(cors());
 
-
 const { getClothes, getClothByClothesId, getSuggestedClothes } = require("./controllers/clothes.controller");
-const { getUserByUserId, patchUserPreferencesByUserId } = require("./controllers/users.controller");
+const { getUserByUserId, patchUserPreferencesByUserId, postNewUser } = require("./controllers/users.controller");
 const { getFavouritesByUserId, postFavouritesByUserId, deleteFavourite } = require("./controllers/favourites.controller");
 const { getBasketByUserId, postClothesToBasketByUserId, deleteBasket, patchBasket } = require("./controllers/basket.controllers");
 
@@ -17,6 +16,7 @@ app.get("/api/clothes/:clothes_id", getClothByClothesId);
 app.get("/api/users/:user_id", getUserByUserId);
 app.patch("/api/users/:user_id/preferences", patchUserPreferencesByUserId);
 app.get("/api/users/:user_id/suggested_clothes", getSuggestedClothes);
+app.post("/api/users", postNewUser)
 
 app.get("/api/favourites/:user_id", getFavouritesByUserId);
 app.post("/api/favourites/:user_id", postFavouritesByUserId);

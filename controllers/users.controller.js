@@ -1,4 +1,4 @@
-const { fetchUserByUserId, patchUserPreferences } = require("../models/user.models");
+const { fetchUserByUserId, patchUserPreferences, addNewUser } = require("../models/user.models");
 
 function getUserByUserId(req, res, next) {
     const { user_id } = req.params;
@@ -21,7 +21,16 @@ function patchUserPreferencesByUserId(req, res, next) {
       .catch(next);
 }
 
+function postNewUser(req, res, next) {
+  const newUser = req.body;
+  addNewUser(newUser).then((user) => {
+    res.status(201).send({ user });
+  })
+    .catch(next);
+}
+
 module.exports = {
     getUserByUserId,
     patchUserPreferencesByUserId,
+    postNewUser
 }

@@ -844,3 +844,60 @@ describe("getUserTags util func", () => {
     );
   });
 });
+
+describe("POST /API/USERS ", () => {
+  test("201: api point exists and returns", () => {
+    return request(app)
+      .post("/api/users")
+      .send({
+        uid: "12345678",
+        username: "bruno123",
+        firstname: "Bruno",
+        preferences: '{"title":{"cat":1,"dog":1,"rekive":1,"techno":1,"aloxe":1,"ess":1,"t-shirt":1,"sage":1,"green":1,"reclaimed":1,"vintage":1,"unisex":1,"stone":1,"active":1,"boxer":1,"shorts":1,"polo":1,"ralph":1,"lauren":1,"icon":1,"logo":1,"heavyweight":1,"classic":1,"fit":1,"white":1},"color":{"red":1,"green":1,"stone":1,"white":1},"category":{"shirt":1,"activewear":1},"brand":{"asos":1,"adidas Originals":1,"Reclaimed Vintage":1,"Polo Ralph Lauren":1}}'
+      })
+      .expect(201);
+  });
+  test("201: returns back an object which has a property called user", () => {
+    return request(app)
+      .post("/api/users")
+      .send({
+        uid: "12345678",
+        username: "bruno123",
+        firstname: "Bruno",
+        preferences: '{"title":{"cat":1,"dog":1,"rekive":1,"techno":1,"aloxe":1,"ess":1,"t-shirt":1,"sage":1,"green":1,"reclaimed":1,"vintage":1,"unisex":1,"stone":1,"active":1,"boxer":1,"shorts":1,"polo":1,"ralph":1,"lauren":1,"icon":1,"logo":1,"heavyweight":1,"classic":1,"fit":1,"white":1},"color":{"red":1,"green":1,"stone":1,"white":1},"category":{"shirt":1,"activewear":1},"brand":{"asos":1,"adidas Originals":1,"Reclaimed Vintage":1,"Polo Ralph Lauren":1}}'
+      })
+      .expect(201)
+      .then(({ body }) => {
+        expect(body).toBeInstanceOf(Object);
+        expect(body).toHaveProperty("user");
+        expect(body.user).toBeInstanceOf(Object);
+      });
+  });
+  test("201: returns back a user object with uid, username, firstname and preferences keys", () => {
+    return request(app)
+      .post("/api/users")
+      .expect(201)
+      .send({
+        uid: "12345678",
+        username: "bruno123",
+        firstname: "Bruno",
+        preferences: '{"title":{"cat":1,"dog":1,"rekive":1,"techno":1,"aloxe":1,"ess":1,"t-shirt":1,"sage":1,"green":1,"reclaimed":1,"vintage":1,"unisex":1,"stone":1,"active":1,"boxer":1,"shorts":1,"polo":1,"ralph":1,"lauren":1,"icon":1,"logo":1,"heavyweight":1,"classic":1,"fit":1,"white":1},"color":{"red":1,"green":1,"stone":1,"white":1},"category":{"shirt":1,"activewear":1},"brand":{"asos":1,"adidas Originals":1,"Reclaimed Vintage":1,"Polo Ralph Lauren":1}}'
+      })
+      .then(({ body }) => {
+        const user = body.user;
+        expect(user).toHaveProperty("uid", expect.any(String));
+        expect(user).toHaveProperty("username", expect.any(String));
+        expect(user).toHaveProperty("firstname", expect.any(String));
+        expect(user).toHaveProperty("preferences", expect.any(String));
+      });
+  });
+  test("400: returns back bad request", () => {
+    return request(app)
+      .post("/api/users")
+      .expect(400)
+      .send()
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request!");
+      });
+  });
+});
