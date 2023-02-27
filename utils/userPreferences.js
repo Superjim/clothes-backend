@@ -42,6 +42,8 @@ function getUserTags(jsonString, topAndRandom) {
     throw new Error("User preferences output string is empty");
   }
 
+  console.log(output);
+
   return output;
 }
 
