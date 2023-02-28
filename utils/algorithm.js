@@ -4,15 +4,6 @@ const recommender = new ContentBasedRecommender({
 });
 const getUserTags = require("./userPreferences");
 
-const topAndRandom = {
-  //n = number of top tags to include
-  //r = number of tags at random to inlude
-  title: { n: 4, r: 0 },
-  color: { n: 2, r: 0 },
-  brand: { n: 2, r: 0 },
-  category: { n: 2, r: 0 },
-};
-
 const formatData = (data, user) => {
   console.log(user.uid);
   const formattedData = data.map((item) => {
@@ -30,7 +21,7 @@ const formatData = (data, user) => {
   });
   formattedData.push({
     id: user.uid,
-    content: getUserTags(user.preferences, topAndRandom),
+    content: getUserTags(user.preferences),
   });
 
   return formattedData;

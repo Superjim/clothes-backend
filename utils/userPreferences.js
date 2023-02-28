@@ -1,23 +1,24 @@
-function getUserTags(jsonString, topAndRandom) {
-  //check json string exists
+function getUserTags(jsonString) {
   if (!jsonString || jsonString.trim() === "") {
     throw new Error("Invalid preferences JSON input");
   }
 
-  // check tags are requested
-  const hasTags = Object.keys(topAndRandom).some(
-    (category) => topAndRandom[category].n + topAndRandom[category].r > 0
-  );
-
-  if (!hasTags) {
-    throw new Error("No tags requested, please check topAndRandom object");
-  }
-
   const obj = JSON.parse(jsonString);
+
+  // read in topAndRandom from preferences JSON or use default
+  const topAndRandom = obj.topAndRandom || {
+    title: { n: 4, r: 0 },
+    color: { n: 2, r: 0 },
+    brand: { n: 2, r: 0 },
+    category: { n: 2, r: 0 },
+  };
 
   //tags object
   const topTags = {};
   Object.entries(obj).forEach(([category, tags]) => {
+    if (category === "topAndRandom") {
+      return; // skip topAndRandom object
+    }
     const n = topAndRandom[category].n;
     const r = topAndRandom[category].r;
     //n = number of tob tags to take

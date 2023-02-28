@@ -732,54 +732,36 @@ describe("PATCH /API/BASKETS/:BASKET_ID", () => {
   });
 });
 
-describe("getUserTags util func", () => {
+describe("getUserTags", () => {
   const getUserTags = require("../utils/userPreferences");
-  test("return a string with 8 tags", () => {
-    const jsonString =
-      '{"category1": {"tag1": 10, "tag2": 20, "tag3": 30, "tag4": 40}, "category2": {"tag5": 5, "tag6": 15, "tag7": 25, "tag8": 35}}';
-    const topAndRandom = {
-      category1: { n: 2, r: 2 },
-      category2: { n: 2, r: 2 },
-    };
-    const result = getUserTags(jsonString, topAndRandom);
-    expect(result.split(" ").length).toEqual(8);
-    expect(typeof result).toBe("string");
-  });
 
-  test("throw error if no tags are requested", () => {
-    const jsonString =
-      '{"category1": {"tag1": 10, "tag2": 20, "tag3": 30, "tag4": 40}, "category2": {"tag1": 5, "tag2": 15, "tag3": 25, "tag4": 35}}';
-    const topAndRandom = {
-      category1: { n: 0, r: 0 },
-      category2: { n: 0, r: 0 },
+  test("throws error when no tags requested", () => {
+    const obj = {
+      title: {},
+      color: {},
+      brand: {},
+      category: {},
     };
-    expect(() => getUserTags(jsonString, topAndRandom)).toThrow();
+    const jsonString = JSON.stringify(obj);
+    expect(() => {
+      getUserTags(jsonString);
+    }).toThrowError("User preferences output string is empty");
   });
 
   test("throw error if JSON string is empty", () => {
     const jsonString = "";
-    const topAndRandom = {
-      category1: { n: 2, r: 2 },
-      category2: { n: 1, r: 1 },
-    };
-    expect(() => getUserTags(jsonString, topAndRandom)).toThrow();
+
+    expect(() => getUserTags(jsonString)).toThrow();
   });
 
-  test("should return only top tags if random tags are not requested", () => {
-    const jsonString =
-      '{"category1": {"tag1": 10, "tag2": 20, "tag3": 30, "tag4": 40}, "category2": {"tag1": 5, "tag2": 15, "tag3": 25, "tag4": 35}}';
-    const topAndRandom = {
-      category1: { n: 3, r: 0 },
-      category2: { n: 2, r: 0 },
-    };
-    const expectedOutput = "tag4 tag3 tag2 tag4 tag3";
-    const result = getUserTags(jsonString, topAndRandom);
-    expect(result).toEqual(expectedOutput);
-    expect(typeof result).toBe("string");
-  });
-
-  test("works with actual categorys", () => {
+  test("returns correct output string", () => {
     const obj = {
+      topAndRandom: {
+        title: { n: 2, r: 0 },
+        color: { n: 2, r: 0 },
+        brand: { n: 2, r: 0 },
+        category: { n: 2, r: 0 },
+      },
       brand: {
         "AAPE BY A BATHING APE®": 2,
         "ASOS DESIGN": 2,
@@ -788,7 +770,13 @@ describe("getUserTags util func", () => {
         "Jack & Jones": 1,
         asos: 1,
       },
-      category: { cargo: 1, loungewear: 2, shirt: 1, shirts: 1, "t-shirts": 4 },
+      category: {
+        cargo: 1,
+        loungewear: 2,
+        shirt: 1,
+        shirts: 1,
+        "t-shirts": 4,
+      },
       color: { blue: 1, gray: 2, lilac: 1, red: 1, white: 4 },
       title: {
         aape: 2,
@@ -829,18 +817,9 @@ describe("getUserTags util func", () => {
       },
     };
     const jsonString = JSON.stringify(obj);
-    const topAndRandom = {
-      //n = number of top tags to include
-      //r = number of tags at random to inlude
-      title: { n: 4, r: 0 },
-      color: { n: 2, r: 0 },
-      brand: { n: 2, r: 0 },
-      category: { n: 2, r: 0 },
-    };
-    const result = getUserTags(jsonString, topAndRandom);
-    console.log(result);
+    const result = getUserTags(jsonString);
     expect(result).toBe(
-      "AAPE BY A BATHING APE® ASOS DESIGN t-shirts loungewear white gray t-shirt white aape ape"
+      "AAPE BY A BATHING APE® ASOS DESIGN t-shirts loungewear white gray t-shirt white"
     );
   });
 });
@@ -853,7 +832,8 @@ describe("POST /API/USERS ", () => {
         uid: "12345678",
         username: "bruno123",
         firstname: "Bruno",
-        preferences: '{"title":{"cat":1,"dog":1,"rekive":1,"techno":1,"aloxe":1,"ess":1,"t-shirt":1,"sage":1,"green":1,"reclaimed":1,"vintage":1,"unisex":1,"stone":1,"active":1,"boxer":1,"shorts":1,"polo":1,"ralph":1,"lauren":1,"icon":1,"logo":1,"heavyweight":1,"classic":1,"fit":1,"white":1},"color":{"red":1,"green":1,"stone":1,"white":1},"category":{"shirt":1,"activewear":1},"brand":{"asos":1,"adidas Originals":1,"Reclaimed Vintage":1,"Polo Ralph Lauren":1}}'
+        preferences:
+          '{"title":{"cat":1,"dog":1,"rekive":1,"techno":1,"aloxe":1,"ess":1,"t-shirt":1,"sage":1,"green":1,"reclaimed":1,"vintage":1,"unisex":1,"stone":1,"active":1,"boxer":1,"shorts":1,"polo":1,"ralph":1,"lauren":1,"icon":1,"logo":1,"heavyweight":1,"classic":1,"fit":1,"white":1},"color":{"red":1,"green":1,"stone":1,"white":1},"category":{"shirt":1,"activewear":1},"brand":{"asos":1,"adidas Originals":1,"Reclaimed Vintage":1,"Polo Ralph Lauren":1}}',
       })
       .expect(201);
   });
@@ -864,7 +844,8 @@ describe("POST /API/USERS ", () => {
         uid: "12345678",
         username: "bruno123",
         firstname: "Bruno",
-        preferences: '{"title":{"cat":1,"dog":1,"rekive":1,"techno":1,"aloxe":1,"ess":1,"t-shirt":1,"sage":1,"green":1,"reclaimed":1,"vintage":1,"unisex":1,"stone":1,"active":1,"boxer":1,"shorts":1,"polo":1,"ralph":1,"lauren":1,"icon":1,"logo":1,"heavyweight":1,"classic":1,"fit":1,"white":1},"color":{"red":1,"green":1,"stone":1,"white":1},"category":{"shirt":1,"activewear":1},"brand":{"asos":1,"adidas Originals":1,"Reclaimed Vintage":1,"Polo Ralph Lauren":1}}'
+        preferences:
+          '{"title":{"cat":1,"dog":1,"rekive":1,"techno":1,"aloxe":1,"ess":1,"t-shirt":1,"sage":1,"green":1,"reclaimed":1,"vintage":1,"unisex":1,"stone":1,"active":1,"boxer":1,"shorts":1,"polo":1,"ralph":1,"lauren":1,"icon":1,"logo":1,"heavyweight":1,"classic":1,"fit":1,"white":1},"color":{"red":1,"green":1,"stone":1,"white":1},"category":{"shirt":1,"activewear":1},"brand":{"asos":1,"adidas Originals":1,"Reclaimed Vintage":1,"Polo Ralph Lauren":1}}',
       })
       .expect(201)
       .then(({ body }) => {
@@ -881,7 +862,8 @@ describe("POST /API/USERS ", () => {
         uid: "12345678",
         username: "bruno123",
         firstname: "Bruno",
-        preferences: '{"title":{"cat":1,"dog":1,"rekive":1,"techno":1,"aloxe":1,"ess":1,"t-shirt":1,"sage":1,"green":1,"reclaimed":1,"vintage":1,"unisex":1,"stone":1,"active":1,"boxer":1,"shorts":1,"polo":1,"ralph":1,"lauren":1,"icon":1,"logo":1,"heavyweight":1,"classic":1,"fit":1,"white":1},"color":{"red":1,"green":1,"stone":1,"white":1},"category":{"shirt":1,"activewear":1},"brand":{"asos":1,"adidas Originals":1,"Reclaimed Vintage":1,"Polo Ralph Lauren":1}}'
+        preferences:
+          '{"title":{"cat":1,"dog":1,"rekive":1,"techno":1,"aloxe":1,"ess":1,"t-shirt":1,"sage":1,"green":1,"reclaimed":1,"vintage":1,"unisex":1,"stone":1,"active":1,"boxer":1,"shorts":1,"polo":1,"ralph":1,"lauren":1,"icon":1,"logo":1,"heavyweight":1,"classic":1,"fit":1,"white":1},"color":{"red":1,"green":1,"stone":1,"white":1},"category":{"shirt":1,"activewear":1},"brand":{"asos":1,"adidas Originals":1,"Reclaimed Vintage":1,"Polo Ralph Lauren":1}}',
       })
       .then(({ body }) => {
         const user = body.user;
