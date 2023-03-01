@@ -78,3 +78,5 @@ npm run seed
 ```
 npm start
 ```
+
+You can also change the port it will run on, check the listen.js file
