@@ -2,6 +2,17 @@
 
 This is a CRUD backend to allow operations for our swipe based react native clothing application.
 
+## Developed By
+
+This app was developed over a period of three weeks by a team of Northcoders students as part of a final capstone project.
+
+- [Sasha Kryvko](https://github.com/Aleksanrda)
+- [Cameron Bloomfield](https://github.com/Cam-Bloom)
+- [Jack Hind](https://github.com/JxckHind)
+- [Jim Jenkinson](https://github.com/Superjim)
+- [Yuliia Ozmitel](https://github.com/juliaozm)
+
+
 # Endpoints
 
 ## Clothes
