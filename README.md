@@ -73,7 +73,7 @@ npm run setup-db
 npm run seed
 ```
 
-5. To start the development server, which you can access at http://localhost:3000, type the following into the terminal:
+5. To start the development server, which you can access at http://localhost:9090, type the following into the terminal:
 
 ```
 npm start
