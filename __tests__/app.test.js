@@ -308,7 +308,7 @@ describe("POST /API/FAVOURITES/:USER_ID ", () => {
     return request(app)
       .post("/api/favourites/12342341")
       .send({
-        clothes_id: 1,
+        clothes_id: 6,
       })
       .expect(201);
   });
@@ -317,7 +317,7 @@ describe("POST /API/FAVOURITES/:USER_ID ", () => {
     return request(app)
       .post("/api/favourites/12342341")
       .send({
-        clothes_id: 1,
+        clothes_id: 6,
       })
       .expect(201)
       .then(({ body }) => {
@@ -332,7 +332,7 @@ describe("POST /API/FAVOURITES/:USER_ID ", () => {
       .post("/api/favourites/12342341")
       .expect(201)
       .send({
-        clothes_id: 1,
+        clothes_id: 6,
       })
       .then(({ body }) => {
         const favourite = body.favourite;
@@ -347,13 +347,24 @@ describe("POST /API/FAVOURITES/:USER_ID ", () => {
       .post("/api/favourites/12342341")
       .expect(201)
       .send({
-        clothes_id: 1,
+        clothes_id: 6,
       })
       .then(({ body }) => {
         const favourite = body.favourite;
+        console.log(favourite)
 
         expect(favourite.uid).toBe("12342341");
-        expect(favourite.clothes_id).toBe(1);
+        expect(favourite.clothes_id).toBe(6);
+      });
+  });
+
+  test("400: returns bad request if a item is added twice", () => {
+    return request(app)
+      .post("/api/favourites/12342341")
+      .expect(400)
+      .send({clothes_id: 1})
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request!");
       });
   });
 
@@ -372,11 +383,11 @@ describe("POST /API/FAVOURITES/:USER_ID ", () => {
       .post("/api/favourites/12342341")
       .expect(400)
       .send({
-        clothes_id: "1",
+        clothes_id: "6",
       })
       .then(({ body }) => {
         expect(body.msg).toBe(
-          "Favourite clothes_id 1 should have a number type"
+          "Favourite clothes_id 6 should have a number type"
         );
       });
   });
@@ -386,7 +397,7 @@ describe("POST /API/FAVOURITES/:USER_ID ", () => {
       .post("/api/favourites/123423415")
       .expect(404)
       .send({
-        clothes_id: 1,
+        clothes_id: 6,
       })
       .then(({ body }) => {
         expect(body.msg).toBe('User ID "123423415" not found');
