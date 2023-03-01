@@ -59,6 +59,10 @@ PGDATABASE=clothes_database
 
 3. Install project dependencies by typing npm install into the terminal
 
+```
+npm install
+```
+
 4. Setup and seed the database by typing the following in terminal:
 
 ```
