@@ -47,6 +47,11 @@ This is a CRUD backend to allow operations for our swipe based react native clot
 
 # Installation
 
+## Prerequisites:
+
+- NodeJS installed (Latest LTS recommended)
+- PostgreSQL installed (Latest LTS recommended)
+
 ## To run this project locally:
 
 1. Clone this repository and open the root directory in VScode or similar
