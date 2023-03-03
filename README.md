@@ -12,6 +12,9 @@ This app was developed over a period of three weeks by a team of Northcoders stu
 - [Jim Jenkinson](https://github.com/Superjim)
 - [Yuliia Ozmitel](https://github.com/juliaozm)
 
+[Watch our presentation on YouTube!](https://www.youtube.com/watch?v=3_3Q-xbtpj0)
+
+[Check out the front-end here](https://github.com/Cam-Bloom/Swipe-Style)
 
 # Endpoints
 
